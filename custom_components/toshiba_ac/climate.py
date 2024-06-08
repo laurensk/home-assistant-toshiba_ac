@@ -22,6 +22,7 @@ from homeassistant.components.climate.const import (
     FAN_OFF,
     ClimateEntityFeature,
     HVACMode,
+    HVACAction,
 )
 from homeassistant.const import ATTR_TEMPERATURE, UnitOfTemperature
 
@@ -146,9 +147,21 @@ class ToshibaClimate(ToshibaAcStateEntity, ClimateEntity):
             await self._device.set_ac_power_selection(feature_list_id)
 
     @property
+    def hvac_action(self) -> HVACAction | None:
+        """Return hvac action only if self cleaning"""
+        if self._device.ac_self_cleaning == ToshibaAcSelfCleaning.ON:
+            return HVACAction.FAN
+        else:
+            return None
+
+    @property
     def hvac_mode(self) -> HVACMode | str | None:
         """Return hvac operation ie. heat, cool mode."""
         if not self.is_on:
+            return HVACMode.OFF
+
+        # When self cleaning, the general mode should be off (since its not doing anything) and the action will be set to fan only.
+        if self._device.ac_self_cleaning == ToshibaAcSelfCleaning.ON:
             return HVACMode.OFF
 
         return TOSHIBA_TO_HVAC_MODE[self._device.ac_mode]
