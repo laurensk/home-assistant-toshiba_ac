@@ -160,9 +160,9 @@ class ToshibaClimate(ToshibaAcStateEntity, ClimateEntity):
         if not self.is_on:
             return HVACMode.OFF
 
-        # When self cleaning, the general mode should be off (since its not doing anything) and the action will be set to fan only.
+        # When self cleaning, the mode and action will be set to fan only.
         if self._device.ac_self_cleaning == ToshibaAcSelfCleaning.ON:
-            return HVACMode.OFF
+            return HVACMode.FAN_ONLY
 
         return TOSHIBA_TO_HVAC_MODE[self._device.ac_mode]
 
