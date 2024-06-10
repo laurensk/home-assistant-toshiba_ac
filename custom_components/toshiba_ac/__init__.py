@@ -47,7 +47,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         try:
             new_sas_token = await device_manager.connect()
 
-            _LOGGER.warning("Successfully got new sas_token!")
+            _LOGGER.info("Successfully got new sas_token!")
 
             # Save new sas_token
             new_data = {**entry.data, "sas_token": new_sas_token}
